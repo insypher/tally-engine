@@ -1,6 +1,6 @@
 // 1. MASTER ITEM LIST
 const rateBook = {};
-const inventoryData = {
+const defaultInventory = {
   Azzaro: "ROLLS",
   Batik: "ROLLS",
   "Bedsheet 2 Pillow": "PIECES",
@@ -109,9 +109,26 @@ const inventoryData = {
   "W.Parker": "ROLLS",
 };
 
-// Use this for your search logic:
-const masterList = Object.keys(inventoryData);
+let inventoryData =
+  JSON.parse(localStorage.getItem("masterInventory")) || defaultInventory;
+let masterList = Object.keys(inventoryData);
 
+async function syncFromGitHub() {
+  const URL =
+    "https://raw.githubusercontent.com/insypher/tally-engine/refs/heads/main/items.json";
+  try {
+    const response = await fetch(URL);
+    const data = await response.json(); // Expected format: {"Azzaro": "ROLLS", "Batik": "ROLLS"}
+
+    localStorage.setItem("masterInventory", JSON.stringify(data));
+    alert("Master list and Units synced!");
+    location.reload();
+  } catch (error) {
+    alert("Sync failed! Check your internet or GitHub URL.");
+  }
+}
+
+// Use this for your search logic:
 let focusedIndex = -1;
 
 // 1. NAVIGATION (Only triggered by KEYDOWN)
