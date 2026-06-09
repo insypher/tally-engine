@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tally XML Engine | TZS Transfer</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <div class="logo-zone">
+          <div class="logo-icon">⚡</div>
+          <div>
+            <h1>Tally XML Engine</h1>
+            <p>Stock Journal TZS Workspace</p>
+          </div>
+        </div>
+        <div class="stats-badge">
+          <span class="stats-label">Total Value</span>
+          <span class="stats-value" id="totalCubits">TZS 0</span>
+        </div>
+      </header>
+
+      <section class="control-card">
+        <div class="control-grid">
+          <div class="input-group">
+            <label>Target Company</label>
+            <input type="text" id="companyName" value="F. K. K. - 19" />
+          </div>
+          <div class="input-group">
+            <label>Source</label>
+            <select id="srcGodown">
+              <option value="RTL">RTL</option>
+              <option value="B - 1">B - 1</option>
+              <option value="B - 2">B - 2</option>
+              <option value="B - 3">B - 3</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Destination</label>
+            <select id="destGodown">
+              <option value="B - 1">B - 1</option>
+              <option value="RTL">RTL</option>
+              <option value="B - 2">B - 2</option>
+              <option value="B - 3">B - 3</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Voucher Date</label>
+            <input type="date" id="voucherDate" />
+          </div>
+
+          <div class="input-group">
+            <label>Narration</label>
+            <input type="text" id="narrationInput" value="Stock Journal" />
+          </div>
+        </div>
+        <div class="footer-controls">
+          <div class="input-group import-group">
+            <label>Import Data (Excel)</label>
+            <input
+              type="file"
+              id="excelInput"
+              accept=".xlsx, .xls"
+              onchange="importExcel(event)"
+            />
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="location.reload()">
+              Reset
+            </button>
+            <button class="btn btn-primary" onclick="GenerateXML()">
+              Generate XML
+            </button>
+            <button class="btn btn-secondary" onclick="DownloadXML()">
+              Download XML
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <main class="inventory-section">
+        <h2>Active Order Entry</h2>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px">
+          <input
+            type="text"
+            id="masterSearch"
+            placeholder="Search item name..."
+            onkeydown="handleNavigation(event)"
+            onkeyup="handleSearch(event)"
+            style="flex: 1"
+          />
+        </div>
+        <div id="searchResults" class="dropdown-results"></div>
+
+        <table class="order-table" id="activeOrderTable">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="activeItems"></tbody>
+        </table>
+      </main>
+
+      <section class="terminal-section">
+        <div class="terminal-header">
+          <div class="terminal-title">
+            <span class="dot red"></span><span class="dot yellow"></span
+            ><span class="dot green"></span>
+            <h3>Tally XML Output Stream</h3>
+          </div>
+        </div>
+        <textarea
+          id="xmlResult"
+          readonly
+          placeholder="Output stream..."
+        ></textarea>
+      </section>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
