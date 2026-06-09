@@ -277,7 +277,7 @@ function calc() {
 }
 
 function GenerateXML() {
-  const comp = document.getElementById("companyName").value;
+  const comp = "F. K. K. - 19";
   const destGodown = document.getElementById("destGodown").value;
   const srcGodown = document.getElementById("srcGodown").value;
   const date = document.getElementById("voucherDate").value.replace(/-/g, "");
