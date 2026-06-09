@@ -111,23 +111,69 @@ const defaultInventory = {
 
 let inventoryData =
   JSON.parse(localStorage.getItem("masterInventory")) || defaultInventory;
+
 let masterList = Object.keys(inventoryData);
 
 async function syncFromGitHub() {
   const URL =
     "https://raw.githubusercontent.com/insypher/tally-engine/refs/heads/main/items.json";
+
   try {
     const response = await fetch(URL);
-    const data = await response.json(); // Expected format: {"Azzaro": "ROLLS", "Batik": "ROLLS"}
+    const newData = await response.json();
 
-    localStorage.setItem("masterInventory", JSON.stringify(data));
-    alert("Master list and Units synced!");
+    // Get current data to compare
+    const oldInventory = JSON.parse(
+      localStorage.getItem("masterInventory") || "{}",
+    );
+    const oldRates = JSON.parse(localStorage.getItem("tallyRateBook") || "{}");
+
+    let inventory = {};
+    let rates = {};
+    let changes = []; // To track what we log
+
+    for (const [itemName, details] of Object.entries(newData)) {
+      const newUnit = details[0];
+      const newRate = parseFloat(details[1]);
+
+      // Check for changes to log them
+      if (oldInventory[itemName] !== newUnit) {
+        changes.push(
+          `Unit updated for ${itemName}: ${oldInventory[itemName] || "None"} -> ${newUnit}`,
+        );
+      }
+      if (oldRates[itemName] !== newRate) {
+        changes.push(
+          `Rate updated for ${itemName}: ${oldRates[itemName] || 0} -> ${newRate}`,
+        );
+      }
+
+      inventory[itemName] = newUnit;
+      rates[itemName] = newRate;
+    }
+
+    // Save
+    localStorage.setItem("masterInventory", JSON.stringify(inventory));
+    localStorage.setItem("tallyRateBook", JSON.stringify(rates));
+
+    // Log the summary to the console
+    if (changes.length > 0) {
+      console.log("--- SYNC SUMMARY ---");
+      changes.forEach((change) => console.log(change));
+      console.log("--------------------");
+      alert(
+        `Sync Complete! ${changes.length} changes applied. Check console (F12) for details.`,
+      );
+    } else {
+      alert("Sync Complete! No changes detected.");
+    }
+
     location.reload();
   } catch (error) {
-    alert("Sync failed! Check your internet or GitHub URL.");
+    console.error("Sync error:", error);
+    alert("Sync failed! Check console (F12) for error details.");
   }
 }
-
 // Use this for your search logic:
 let focusedIndex = -1;
 
